@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: manager-app
+
+ministore:
+  services:
+    catalogue:
+      uri: http://localhost:8081
+

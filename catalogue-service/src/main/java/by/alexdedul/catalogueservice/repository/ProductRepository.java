@@ -1,6 +1,6 @@
-package by.alexdedul.managerapp.repository;
+package by.alexdedul.catalogueservice.repository;
 
-import by.alexdedul.managerapp.entity.Product;
+import by.alexdedul.catalogueservice.entity.Product;
 
 import java.util.List;
 import java.util.Optional;

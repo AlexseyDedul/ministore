@@ -1,7 +1,7 @@
-package by.alexdedul.managerapp.service;
+package by.alexdedul.catalogueservice.service;
 
-import by.alexdedul.managerapp.entity.Product;
-import by.alexdedul.managerapp.repository.ProductRepository;
+import by.alexdedul.catalogueservice.entity.Product;
+import by.alexdedul.catalogueservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
