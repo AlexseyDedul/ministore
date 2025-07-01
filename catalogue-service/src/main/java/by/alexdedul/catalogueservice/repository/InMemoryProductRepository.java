@@ -1,13 +1,12 @@
-package by.alexdedul.managerapp.repository;
+package by.alexdedul.catalogueservice.repository;
 
-import by.alexdedul.managerapp.entity.Product;
+import by.alexdedul.catalogueservice.entity.Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Repository
-public class InMemoryProductRepository implements ProductRepository{
+public class InMemoryProductRepository implements ProductRepository {
     private final List<Product> products = Collections.synchronizedList(new LinkedList<>());
 
     @Override
