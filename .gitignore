@@ -3,11 +3,15 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.mvn
+mvnw
+mvnw.cmd
+
 ### IntelliJ IDEA ###
 .idea/*
-!.idea/codeStyles/
-!.idea/inspectionProfiles/
-!.idea/runConfigurations/
+.idea/codeStyles/
+.idea/inspectionProfiles/
+.idea/runConfigurations/
 
 ### Eclipse ###
 .apt_generated
