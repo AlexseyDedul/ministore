@@ -1,5 +1,19 @@
 spring:
   application:
     name: catalogue-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/catalogue
+    username: postgres
+    password: postgres
+  flyway:
+    schemas:
+      - public
+      - catalogue
+
 server:
   port: 8081
+
+logging:
+  level:
+    sql: info
