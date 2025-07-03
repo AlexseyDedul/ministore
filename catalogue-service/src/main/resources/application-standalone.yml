@@ -11,6 +11,12 @@ spring:
       - public
       - catalogue
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/ministore
+
 server:
   port: 8081
 
