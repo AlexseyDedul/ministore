@@ -2,15 +2,26 @@ spring:
   application:
     name: manager-app
 
-  datasource:
-    url: jdbc:postgresql://localhost:5434/manager
-    username: manager
-    password: manager
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/ministore
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: manager-app
+            client-secret: 4wCOwnIqMIdD5rgn7Ano0XGvDeWimsE4
+            scope:
+              - openid
+              - view_catalogue
+              - edit_catalogue
+              - microprofile-jwt
 
 ministore:
   services:
     catalogue:
       uri: http://localhost:8081
-      username: catalogue_service_user
-      password: password
+      registration-id: keycloak
 
