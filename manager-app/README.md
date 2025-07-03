@@ -1,0 +1,1 @@
+docker run --name manager-db -p 5434:5432 -e POSTGRES_DB=manager -e POSTGRES_USER=manager -e POSTGRES_PASSWORD=manager postgres:16
