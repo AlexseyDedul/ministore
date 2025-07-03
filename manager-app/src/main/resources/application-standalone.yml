@@ -19,7 +19,6 @@ spring:
               - edit_catalogue
               - microprofile-jwt
 
-
 ministore:
   services:
     catalogue:
