@@ -50,11 +50,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-			<version>24.0.1</version>
-			<scope>compile</scope>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock-standalone</artifactId>
+			<version>3.9.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -82,6 +89,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<classifier>exec</classifier>
 				</configuration>
 				<executions>
 					<execution>

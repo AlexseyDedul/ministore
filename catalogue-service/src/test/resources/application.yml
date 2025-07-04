@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16:///ministore?TC_DEAMON=true
+    username: ministore
+    password: ministore

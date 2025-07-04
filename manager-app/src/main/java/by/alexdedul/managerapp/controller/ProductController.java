@@ -24,13 +24,13 @@ public class ProductController {
     private final MessageSource messageSource;
 
     @ModelAttribute("product")
-    public Product getProduct(@PathVariable("productId") Integer productId) {
+    public Product getProductById(@PathVariable("productId") Integer productId) {
         return productsRestClient.getProduct(productId)
                 .orElseThrow(() -> new NoSuchElementException("catalogue.errors.product.not_found"));
     }
 
     @GetMapping
-    public String getProductById(){
+    public String getProduct(){
         return "catalogue/products/product";
     }
 
@@ -43,11 +43,13 @@ public class ProductController {
     public String updateProduct(
             @ModelAttribute(value = "product", binding = false) Product product,
             UpdateProductPayload updateProductPayload,
-            Model model){
+            Model model,
+            HttpServletResponse response){
         try{
             productsRestClient.updateProduct(product.id(), updateProductPayload.title(), updateProductPayload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
         }catch (BadRequestException e){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             model.addAttribute("payload", updateProductPayload);
             model.addAttribute("errors", e.getErrors());
             return "catalogue/products/edit";
