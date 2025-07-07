@@ -1,14 +1,15 @@
-package by.alexdedul.customerapp.service;
+package by.alexdedul.customerapp.client;
 
 import by.alexdedul.customerapp.entity.FavouriteProduct;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface FavouriteProductsService {
+public interface FavouriteProductsClient {
+    Mono<FavouriteProduct> findFavouriteProductByProductId(int productId);
 
     Mono<FavouriteProduct> addProductToFavourites(int productId);
+
     Mono<Void> removeProductFromFavourites(int productId);
-    Mono<FavouriteProduct> findFavouriteProductByProduct(int productId);
 
     Flux<FavouriteProduct> findFavouriteProducts();
 }

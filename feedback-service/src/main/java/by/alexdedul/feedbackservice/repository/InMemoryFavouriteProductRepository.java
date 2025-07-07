@@ -1,6 +1,6 @@
-package by.alexdedul.customerapp.repository;
+package by.alexdedul.feedbackservice.repository;
 
-import by.alexdedul.customerapp.entity.FavouriteProduct;
+import by.alexdedul.feedbackservice.entity.FavouriteProduct;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

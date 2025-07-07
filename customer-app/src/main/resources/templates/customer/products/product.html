@@ -13,7 +13,8 @@
     <button type="submit">Add to favourites</button>
 </form>
 
-<form method="post" data-th-action="@{/customer/products/{productId}/remove-from-favourites(productId=${product.id})}"
+<form method="post"
+      data-th-action="@{/customer/products/{productId}/remove-from-favourites(productId=${product.id})}"
       data-th-if="${inFavourite}">
     <button type="submit">Remove from favourites</button>
 </form>
@@ -36,7 +37,7 @@
     <br>
     <label>
         Review: <br>
-        <textarea name="review"></textarea>
+        <textarea name="review" data-th-text="${payload?.review}"></textarea>
     </label><br>
     <button type="submit">Send review</button>
 </form>

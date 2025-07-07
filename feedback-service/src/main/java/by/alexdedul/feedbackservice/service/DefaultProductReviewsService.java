@@ -1,7 +1,7 @@
-package by.alexdedul.customerapp.service;
+package by.alexdedul.feedbackservice.service;
 
-import by.alexdedul.customerapp.entity.ProductReview;
-import by.alexdedul.customerapp.repository.ProductReviewRepository;
+import by.alexdedul.feedbackservice.entity.ProductReview;
+import by.alexdedul.feedbackservice.repository.ProductReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
