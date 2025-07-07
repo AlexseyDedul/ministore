@@ -9,3 +9,5 @@ ministore:
   services:
     catalogue:
       uri: http://localhost:8081
+    feedback:
+      uri: http://localhost:8084

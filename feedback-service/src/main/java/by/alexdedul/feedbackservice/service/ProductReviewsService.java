@@ -1,6 +1,6 @@
-package by.alexdedul.customerapp.service;
+package by.alexdedul.feedbackservice.service;
 
-import by.alexdedul.customerapp.entity.ProductReview;
+import by.alexdedul.feedbackservice.entity.ProductReview;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
