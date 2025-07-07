@@ -14,17 +14,21 @@ public class SecurityBeans {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/catalogue-api/products")
-                                .hasAuthority("SCOPE_edit_catalogue")
-                                .requestMatchers(HttpMethod.PATCH, "/catalogue-api/products/{productId:\\d}")
-                                .hasAuthority("SCOPE_edit_catalogue")
-                                .requestMatchers(HttpMethod.DELETE, "/catalogue-api/products/{productId:\\d}")
-                                .hasAuthority("SCOPE_edit_catalogue")
-                                .requestMatchers(HttpMethod.GET)
-                                .hasAuthority("SCOPE_view_catalogue")
-                                .anyRequest().denyAll())
+                // todo: return back
+//                .authorizeHttpRequests(authorizeRequests ->
+//                        authorizeRequests
+//                                .requestMatchers(HttpMethod.POST, "/catalogue-api/products")
+//                                .hasAuthority("SCOPE_edit_catalogue")
+//                                .requestMatchers(HttpMethod.PATCH, "/catalogue-api/products/{productId:\\d}")
+//                                .hasAuthority("SCOPE_edit_catalogue")
+//                                .requestMatchers(HttpMethod.DELETE, "/catalogue-api/products/{productId:\\d}")
+//                                .hasAuthority("SCOPE_edit_catalogue")
+//                                .requestMatchers(HttpMethod.GET)
+//                                .hasAuthority("SCOPE_view_catalogue")
+//                                .anyRequest().denyAll())
+                // todo:delete
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
+                //
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
