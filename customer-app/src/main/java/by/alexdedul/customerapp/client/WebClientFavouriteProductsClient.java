@@ -23,7 +23,7 @@ public class WebClientFavouriteProductsClient implements FavouriteProductsClient
                 .uri("/feedback-api/favourite-products/by-product-id/{productId}", productId)
                 .retrieve()
                 .bodyToMono(FavouriteProduct.class)
-                .onErrorComplete(WebClientResponseException.class);
+                .onErrorComplete(WebClientResponseException.NotFound.class);
     }
 
     @Override
