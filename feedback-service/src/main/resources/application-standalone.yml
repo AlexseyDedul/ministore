@@ -6,5 +6,11 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/feedback
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/ministore
+
 server:
   port: 8084

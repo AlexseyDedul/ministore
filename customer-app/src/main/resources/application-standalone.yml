@@ -1,6 +1,20 @@
 spring:
   application:
     name: customer-app
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/ministore
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: customer-app
+            client-secret: WuiVi5VBs98DTmN3BEbGiLX40SwOGpdH
+            scope:
+              - openid
+              - view_catalogue
 
 server:
   port: 8083
