@@ -33,8 +33,8 @@ public class WebClienProductReviewsClient implements ProductReviewsClient {
                 .retrieve()
                 .bodyToMono(ProductReview.class)
                 .onErrorMap(WebClientResponseException.BadRequest.class,
-                        ex -> new ClientBadRequestException(ex,
-                                ((List<String>) Objects.requireNonNull(ex.getResponseBodyAs(ProblemDetail.class))
+                        exception -> new ClientBadRequestException(exception,
+                                ((List<String>) Objects.requireNonNull(exception.getResponseBodyAs(ProblemDetail.class))
                                         .getProperties().get("errors"))));
     }
 }
