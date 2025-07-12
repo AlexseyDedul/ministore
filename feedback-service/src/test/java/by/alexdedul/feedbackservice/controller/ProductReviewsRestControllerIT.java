@@ -169,4 +169,24 @@ class ProductReviewsRestControllerIT {
                 """);
         //then
     }
+
+    @Test
+    void createProductReview_UserIsNotAuthenticated_ReturnsNotAuthorized() {
+        // given
+
+        // when
+        this.webTestClient
+                .post()
+                .uri("/feedback-api/product-reviews")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "productId": 1,
+                            "rating": 5,
+                            "review": "Good!"
+                        }""")
+                .exchange()
+                // then
+                .expectStatus().isUnauthorized();
+    }
 }
