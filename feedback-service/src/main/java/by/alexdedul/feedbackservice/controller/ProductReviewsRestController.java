@@ -3,6 +3,9 @@ package by.alexdedul.feedbackservice.controller;
 import by.alexdedul.feedbackservice.controller.payload.NewProductReviewPayload;
 import by.alexdedul.feedbackservice.entity.ProductReview;
 import by.alexdedul.feedbackservice.service.ProductReviewsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSourceResolvable;
@@ -29,6 +32,9 @@ public class ProductReviewsRestController {
     private final ProductReviewsService productReviewsService;
 
     @GetMapping("by-product-id/{productId:\\d+}")
+    @Operation(
+            security = @SecurityRequirement(name = "keycloak")
+    )
     public Flux<ProductReview> findProductReviewsByProductId(@PathVariable("productId") Integer productId) {
         return productReviewsService.findProductReviewsByProduct(productId);
     }

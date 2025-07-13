@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import reactor.core.publisher.Mono;
@@ -18,11 +22,18 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
 @Slf4j
 @SpringBootTest
 @AutoConfigureWebTestClient
+@AutoConfigureRestDocs
+@ExtendWith(RestDocumentationExtension.class)
 class ProductReviewsRestControllerIT {
 
     @Autowired
@@ -122,6 +133,7 @@ class ProductReviewsRestControllerIT {
                       "review": "Review 3"
                     }""")
                 .exchange()
+                //then
                 .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectHeader().exists(HttpHeaders.LOCATION)
                 .expectStatus().isCreated()
@@ -133,8 +145,26 @@ class ProductReviewsRestControllerIT {
                   "review": "Review 3",
                   "userId": "user-tester"
                 }
-                """).jsonPath("$.id").exists();
-        //then
+                """).jsonPath("$.id").exists()
+                .consumeWith(document("feedback/product_reviews/create_product_review",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("productId").type("int").description("Product Id"),
+                                fieldWithPath("rating").type("int").description("Rating"),
+                                fieldWithPath("review").type("string").description("Review")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type("uuid").description("Review Id"),
+                                fieldWithPath("productId").type("int").description("Product Id"),
+                                fieldWithPath("rating").type("int").description("Rating"),
+                                fieldWithPath("review").type("string").description("Review"),
+                                fieldWithPath("userId").type("string").description("User Id")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION)
+                                        .description("Location of created product")
+                        )));
     }
 
     @Test

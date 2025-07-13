@@ -14,9 +14,8 @@ public class SecurityBeans {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                // todo: return back
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/catalogue-api/products")
                                 .hasAuthority("SCOPE_edit_catalogue")
                                 .requestMatchers(HttpMethod.PATCH, "/catalogue-api/products/{productId:\\d}")
@@ -26,9 +25,6 @@ public class SecurityBeans {
                                 .requestMatchers(HttpMethod.GET)
                                 .hasAuthority("SCOPE_view_catalogue")
                                 .anyRequest().denyAll())
-                // todo:delete
-//                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
-                //
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

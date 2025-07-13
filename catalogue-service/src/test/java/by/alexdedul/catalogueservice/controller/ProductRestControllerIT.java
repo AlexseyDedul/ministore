@@ -1,18 +1,27 @@
 package by.alexdedul.catalogueservice.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.operation.preprocess.HeadersModifyingOperationPreprocessor;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@ExtendWith(RestDocumentationExtension.class)
 class ProductRestControllerIT {
     @Autowired
     MockMvc mockMvc;
@@ -45,7 +56,15 @@ class ProductRestControllerIT {
                                     "title": "Product 1",
                                     "details": "Product description 1"
                                 }""")
-                );
+                )
+                .andDo(document("catalogue/products/find_all",
+                        preprocessResponse(prettyPrint(), new HeadersModifyingOperationPreprocessor()
+                                .remove("Vary")),
+                        responseFields(
+                                fieldWithPath("id").description("ID product").type("int"),
+                                fieldWithPath("title").description("Title product").type("string"),
+                                fieldWithPath("details").description("Details product").type("string")
+                        )));
     }
 
     @Test
