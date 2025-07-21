@@ -1,4 +1,13 @@
 spring:
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          name: catalogue-service
+          service-host-type: ip
+        url: http://localhost:8085
+
   application:
     name: catalogue-service
 
@@ -16,6 +25,17 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/ministore
+      client:
+        registration:
+          keycloak:
+            client-secret: mEj0DCUyIKUw12VQd8tMDjKMcjAJ3tjq
+            client-id: catalogue-service-metrics-client
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/ministore
 
 server:
   port: 8081
@@ -32,3 +52,14 @@ springdoc:
 
 keycloak:
   uri: http://localhost:8082
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
