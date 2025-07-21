@@ -1,6 +1,14 @@
 spring:
   application:
     name: feedback-service
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          name: feedback-service
+          service-host-type: ip
+        url: http://localhost:8085
 
   data:
     mongodb:
@@ -11,6 +19,17 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/ministore
+      client:
+        registration:
+          keycloak:
+            client-secret: yqMrfwoGO8Vl4BvytbJb4Xi2i0wez9hs
+            client-id: feedback-service-metrics-client
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/ministore
 
 server:
   port: 8084
@@ -23,3 +42,14 @@ springdoc:
 
 keycloak:
   uri: http://localhost:8082
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

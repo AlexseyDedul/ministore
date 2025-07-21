@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: admin-server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/ministore
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/ministore
+        registration:
+          keycloak:
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics
+            client-id: admin-service
+            client-secret: W4l8I3HCPjvpEU0Iq5aWpMppDfgvOz0F
+          login:
+            provider: keycloak
+            scope:
+              - metrics
+              - openid
+            client-id: admin-service
+            client-secret: W4l8I3HCPjvpEU0Iq5aWpMppDfgvOz0F
+
+server:
+  port: 8085
+

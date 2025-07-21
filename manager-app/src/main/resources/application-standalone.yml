@@ -1,6 +1,14 @@
 spring:
   application:
     name: manager-app
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          name: manager-app
+          service-host-type: ip
+        url: http://localhost:8085
 
   security:
     oauth2:
@@ -18,10 +26,31 @@ spring:
               - view_catalogue
               - edit_catalogue
               - microprofile-jwt
+          metrics:
+            provider: keycloak
+            client-secret: CYhMBfmKQDzSdqpXIxAEzIfPBs0VdqA1
+            client-id: manager-app-metrics-client
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/ministore
 
 ministore:
   services:
     catalogue:
       uri: http://localhost:8081
       registration-id: keycloak
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
