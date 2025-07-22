@@ -14,3 +14,8 @@ docker run --name ministore-metrics -p 8428:8428 -v ./config/victoria-metrics/pr
 ```shell
 docker run --name ministore-grafana -p 3000:3000 -v ./data/grafana:/var/lib/grafana -u "$(id -u)" grafana/grafana:10.2.4
 ```
+
+## Grafana loki
+```shell
+ministore % docker run --name ministore-loki -p 3100:3100 grafana/loki:2.9.4
+```
