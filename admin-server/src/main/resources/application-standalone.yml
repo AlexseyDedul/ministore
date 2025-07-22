@@ -5,11 +5,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/ministore
+          issuer-uri: http://host.docker.internal:8082/realms/ministore
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:8082/realms/ministore
+            issuer-uri: http://host.docker.internal:8082/realms/ministore
         registration:
           keycloak:
             authorization-grant-type: client_credentials
@@ -27,4 +27,13 @@ spring:
 
 server:
   port: 8085
-
+management:
+  metrics:
+    tags:
+      application: admin-server
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus

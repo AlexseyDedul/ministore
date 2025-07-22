@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/ministore
+          issuer-uri: http://host.docker.internal:8082/realms/ministore
       client:
         registration:
           keycloak:
@@ -35,7 +35,7 @@ spring:
               - metrics_server
         provider:
           keycloak:
-            issuer-uri: http://localhost:8082/realms/ministore
+            issuer-uri: http://host.docker.internal:8082/realms/ministore
 
 server:
   port: 8081
