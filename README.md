@@ -19,3 +19,8 @@ docker run --name ministore-grafana -p 3000:3000 -v ./data/grafana:/var/lib/graf
 ```shell
 ministore % docker run --name ministore-loki -p 3100:3100 grafana/loki:2.9.4
 ```
+
+## Grafana tempo
+```shell
+docker run --name ministore-tracing -p 3200:3200 -p 9095:9095 -p 4317:4317 -p 4318:4318 -p 9411:9411 -p 14268:14268 -v ./config/tempo/tempo.yml:/etc/tempo.yml grafana/tempo:2.3.1 -config.file=/etc/tempo.yml
+```

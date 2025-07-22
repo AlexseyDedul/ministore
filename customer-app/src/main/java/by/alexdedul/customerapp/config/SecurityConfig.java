@@ -8,20 +8,21 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
+import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
+
 @Configuration
 public class SecurityConfig {
 
     @Bean
     @Priority(0)
-    public SecurityWebFilterChain metricsSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain metricsSecurityWebFilterChain(ServerHttpSecurity http) {
         return http
-                .authorizeExchange(configurer -> configurer
-                        .pathMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
-                        .anyExchange().authenticated())
+                .securityMatcher(pathMatchers("/actuator/**"))
+                .authorizeExchange(customizer -> customizer.pathMatchers("/actuator/**")
+                        .hasAuthority("SCOPE_metrics"))
+                .oauth2ResourceServer(customizer -> customizer.jwt(Customizer.withDefaults()))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                .oauth2ResourceServer(customizer -> customizer.jwt(Customizer.withDefaults()))
-                .oauth2Client(Customizer.withDefaults())
                 .build();
     }
 
