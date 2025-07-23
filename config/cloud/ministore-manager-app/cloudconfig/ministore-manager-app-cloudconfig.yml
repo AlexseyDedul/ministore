@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: manager-app
   boot:
     admin:
       client:
@@ -67,6 +65,6 @@ management:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
   instance:
     prefer-ip-address: true

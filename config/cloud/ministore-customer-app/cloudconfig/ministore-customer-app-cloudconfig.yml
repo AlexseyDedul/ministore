@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: manager-app
   boot:
     admin:
       client:
@@ -15,24 +13,22 @@ spring:
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: manager-app
-            client-secret: 4wCOwnIqMIdD5rgn7Ano0XGvDeWimsE4
+            client-id: customer-app
+            client-secret: WuiVi5VBs98DTmN3BEbGiLX40SwOGpdH
             scope:
               - openid
               - view_catalogue
-              - edit_catalogue
-              - microprofile-jwt
           metrics:
             provider: keycloak
-            client-secret: 4wCOwnIqMIdD5rgn7Ano0XGvDeWimsE4
-            client-id: manager-app
+            client-secret: WuiVi5VBs98DTmN3BEbGiLX40SwOGpdH
+            client-id: customer-app
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
           discovery:
             provider: keycloak
-            client-secret: 4wCOwnIqMIdD5rgn7Ano0XGvDeWimsE4
-            client-id: manager-app
+            client-secret: WuiVi5VBs98DTmN3BEbGiLX40SwOGpdH
+            client-id: customer-app
             authorization-grant-type: client_credentials
             scope:
               - discovery
@@ -44,7 +40,8 @@ ministore:
   services:
     catalogue:
       uri: lb://ministore-catalogue-service
-      registration-id: keycloak
+    feedback:
+      uri: lb://ministore-feedback-service
 
 management:
   health:
@@ -67,6 +64,6 @@ management:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
   instance:
     prefer-ip-address: true

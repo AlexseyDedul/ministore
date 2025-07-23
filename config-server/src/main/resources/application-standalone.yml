@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file://${user.home}/Documents/my-projects/ministore/config/cloud/{application}/{profile}
+server:
+  port: 8888
