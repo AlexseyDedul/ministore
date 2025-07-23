@@ -5,7 +5,8 @@ spring:
     import: 'optional:configserver:'
   cloud:
     config:
-      uri: http://config:config-password@localhost:8888
+      uri: http://config:config-password@host.docker.internal:8888
 
 server:
   port: 8080
+  forward-headers-strategy: framework

@@ -1,0 +1,86 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - RemoveRequestHeader=Forwarded
+        - RemoveRequestHeader=X-Forwarded-For
+        - AddRequestHeader=X-Forwarded-Host, ${request.headers.Host}
+        - AddRequestHeader=X-Forwarded-Port, "8086"
+        - AddRequestHeader=X-Forwarded-Proto, "http"
+      server:
+        webflux:
+          routes:
+            - id: catalogue-service-route
+              uri: lb://ministore-catalogue-service
+              predicates:
+                - Host=**catalogue.api.mini.store.127.0.0.1.nip.io**
+              filters:
+                - PreserveHostHeader
+            - id: feedback-service-route
+              uri: lb://ministore-feedback-service
+              predicates:
+                - Host=**feedback.api.mini.store.127.0.0.1.nip.io**
+              filters:
+                - PreserveHostHeader
+            - id: customer-app-route
+              uri: lb://ministore-customer-app
+              predicates:
+                - Host=**customer.api.mini.store.127.0.0.1.nip.io**
+              filters:
+                - PreserveHostHeader
+            - id: manager-app-route
+              uri: lb://ministore-manager-app
+              predicates:
+                - Host=**manager.api.mini.store.127.0.0.1.nip.io**
+              filters:
+                - PreserveHostHeader
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8082/realms/ministore
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://host.docker.internal:8082/realms/ministore
+        registration:
+          discovery:
+            provider: keycloak
+            client-id: api-gateway
+            client-secret: fslnapf076wzg2r4MMYiRdEAyKsHYWQG
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
+  boot:
+    admin:
+      client:
+        enabled: false
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  zipkin:
+    tracing:
+      endpoint: http://host.docker.internal:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://host.docker.internal:8761/eureka/
+#    register-with-eureka: false
+#    registry-fetch-interval-seconds: 1
+  instance:
+    prefer-ip-address: true
+#    lease-renewal-interval-in-seconds: 1
+#    lease-expiration-duration-in-seconds: 1

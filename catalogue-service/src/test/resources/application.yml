@@ -3,3 +3,13 @@ spring:
     url: jdbc:tc:postgresql:16:///ministore?TC_DEAMON=true
     username: ministore
     password: ministore
+  boot:
+    admin:
+      client:
+        enabled: false
+    cloud:
+      config:
+        enabled: false
+  eureka:
+    client:
+      enabled: false
