@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ministore-catalogue-service
+  config:
+    import: 'optional:configserver:'
+  cloud:
+    config:
+      uri: http://config:config-password@localhost:8888
+server:
+  port: 8081
