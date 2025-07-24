@@ -19,7 +19,10 @@ spring:
 eureka:
   instance:
     hostname: host.docker.internal
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 1
   client:
+    registryFetchIntervalSeconds: 1
     register-with-eureka: false
     fetch-registry: false
     service-url:

@@ -6,7 +6,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/feedback
+      uri: mongodb://host.docker.internal:27017/feedback
 
   security:
     oauth2:
@@ -61,7 +61,10 @@ management:
 
 eureka:
   client:
+    registryFetchIntervalSeconds: 1
     service-url:
       defaultZone: http://host.docker.internal:8761/eureka/
   instance:
     prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 1

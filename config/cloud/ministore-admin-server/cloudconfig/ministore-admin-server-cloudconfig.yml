@@ -44,5 +44,8 @@ eureka:
     service-url:
       defaultZone: http://host.docker.internal:8761/eureka/
     register-with-eureka: false
+    registryFetchIntervalSeconds: 1
   instance:
     prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 1

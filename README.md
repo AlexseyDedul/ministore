@@ -17,7 +17,7 @@ docker run --name ministore-grafana -p 3000:3000 -v ./data/grafana:/var/lib/graf
 
 ## Grafana loki
 ```shell
-ministore % docker run --name ministore-loki -p 3100:3100 grafana/loki:2.9.4
+docker run --name ministore-loki -p 3100:3100 grafana/loki:2.9.4
 ```
 
 ## Grafana tempo

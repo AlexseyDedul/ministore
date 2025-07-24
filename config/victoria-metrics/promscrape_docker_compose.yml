@@ -1,0 +1,90 @@
+scrape_configs:
+  - job_name: ministore_admin_service
+    static_configs:
+      - targets: ["http://admin-server:8085"]
+        labels:
+          application: ministore_admin_service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+
+  - job_name: ministore_catalogue_service
+    static_configs:
+      - targets: [ "http://catalogue-service:8081" ]
+        labels:
+          application: ministore_catalogue_service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+
+  - job_name: ministore_api_gateway
+    static_configs:
+      - targets: [ "http://api-gateway:8086" ]
+        labels:
+          application: ministore_api_gateway
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+
+  - job_name: ministore_feedback_service
+    static_configs:
+      - targets: [ "http://feedback-service:8084" ]
+        labels:
+          application: ministore_feedback_service
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+
+  - job_name: ministore_customer_app
+    static_configs:
+      - targets: [ "http://customer-app:8083" ]
+        labels:
+          application: ministore_customer_app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
+
+  - job_name: ministore_manager_app
+    static_configs:
+      - targets: [ "http://manager-app:8080" ]
+        labels:
+          application: ministore_manager_app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+      token_url: http://host.docker.internal:8082/realms/ministore/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials
