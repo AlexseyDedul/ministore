@@ -14,7 +14,10 @@ public class SecurityBeans {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated())
+                .authorizeHttpRequests(customizer ->
+                        customizer
+                                .requestMatchers("/actuator/**").permitAll()
+                                .anyRequest().authenticated())
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

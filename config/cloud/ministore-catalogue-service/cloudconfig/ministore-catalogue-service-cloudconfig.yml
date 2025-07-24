@@ -5,7 +5,7 @@ spring:
         enabled: false
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/catalogue
+    url: jdbc:postgresql://catalogue-db:5432/catalogue
     username: postgres
     password: postgres
   flyway:
@@ -70,7 +70,10 @@ management:
 
 eureka:
   client:
+    registryFetchIntervalSeconds: 1
     service-url:
       defaultZone: http://host.docker.internal:8761/eureka/
   instance:
     prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 1
