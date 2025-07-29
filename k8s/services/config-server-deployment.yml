@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ministore-config-server
+  labels:
+    app: ministore-config-server
+spec:
+  selector:
+    matchLabels:
+      app: ministore-config-server
+  template:
+    metadata:
+      labels:
+        app: ministore-config-server
+    spec:
+      containers:
+        - name: ministore-config-server
+          image: ministore/config-server:0.0.1
+          ports:
+            - containerPort: 8888
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: git
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ministore-config-server-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 8888
+      name: http
+  selector:
+    app: ministore-config-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ministore-config-server-ingress
+spec:
+  rules:
+    - host: config.ministore.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-config-server-svc
+                port:
+                  name: http
