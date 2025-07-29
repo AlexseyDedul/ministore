@@ -1,0 +1,30 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+        registration:
+          keycloak:
+            client-id: manager-app-k8s
+            client-secret: eHKhkcNkc6cU2T2hmh6jXjJTi7BrowNt
+          metrics:
+            client-id: manager-app-k8s
+            client-secret: eHKhkcNkc6cU2T2hmh6jXjJTi7BrowNt
+          discovery:
+            client-id: manager-app-k8s
+            client-secret: eHKhkcNkc6cU2T2hmh6jXjJTi7BrowNt
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://ministore-eureka-server-svc.ministore.svc.cluster.local:8761/eureka/
+management:
+  zipkin:
+    tracing:
+      endpoint: http://tempo-svc.ministore.svc.cluster.local:9411/api/v2/spans

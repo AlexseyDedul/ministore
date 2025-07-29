@@ -115,7 +115,7 @@ services:
       args:
         JAR_FILE: config-server/target/config-server-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/config-server:0.0.1
+        - 192.168.49.1:5000/ministore/config-server:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: native
       SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:///config/{application}/{profile}
@@ -131,7 +131,7 @@ services:
       args:
         JAR_FILE: eureka-server/target/eureka-server-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/eureka-server:0.0.1
+        - 192.168.49.1:5000/ministore/eureka-server:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
       LOKI: http://loki:3100
@@ -151,7 +151,7 @@ services:
       args:
         JAR_FILE: admin-server/target/admin-server-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/admin-server:0.0.1
+        - 192.168.49.1:5000/ministore/admin-server:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
       LOKI: http://loki:3100
@@ -175,7 +175,7 @@ services:
       args:
         JAR_FILE: catalogue-service/target/catalogue-service-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/catalogue-service:0.0.1
+        - 192.168.49.1:5000/ministore/catalogue-service:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig, gateway
       LOKI: http://loki:3100
@@ -199,7 +199,7 @@ services:
       args:
         JAR_FILE: feedback-service/target/feedback-service-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/feedback-service:0.0.1
+        - 192.168.49.1:5000/ministore/feedback-service:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig, gateway
       LOKI: http://loki:3100
@@ -223,7 +223,7 @@ services:
       args:
         JAR_FILE: customer-app/target/customer-app-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/customer-app:0.0.1
+        - 192.168.49.1:5000/ministore/customer-app:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig, gateway
       LOKI: http://loki:3100
@@ -249,7 +249,7 @@ services:
       args:
         JAR_FILE: manager-app/target/manager-app-0.1.0-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/manager-app:0.1.0
+        - 192.168.49.1:5000/ministore/manager-app:0.1.0
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig, gateway
       LOKI: http://loki:3100
@@ -273,7 +273,7 @@ services:
       args:
         JAR_FILE: api-gateway/target/api-gateway-0.0.1-SNAPSHOT-exec.jar
       tags:
-        - localhost:5000/ministore/api-gateway:0.0.1
+        - 192.168.49.1:5000/ministore/api-gateway:0.0.1
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
       LOKI: http://loki:3100

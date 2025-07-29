@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-vmagent-cm
+data:
+  promscrape.yml: |
+    scrape_configs:
+      - job_name: ministore_api_gateway
+        static_configs:
+          - targets: ["http://localhost:8080"]
+            labels:
+              application: ministore-api-gateway
+        metrics_path: /actuator/prometheus
+        oauth2:
+          client_id: victoria-metrics
+          client_secret: OLOTeDyuXdXPdUafgt7UUAxiMMLPuiU1
+          token_url: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore/protocol/openid-connect/token
+          scopes:
+            - metrics
+          endpoint_params:
+            grant_type: client_credentials
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ministore-api-gateway-deployment
+  labels:
+    app: ministore-api-gateway
+spec:
+  selector:
+    matchLabels:
+      app: ministore-api-gateway
+  template:
+    metadata:
+      labels:
+        app: ministore-api-gateway
+    spec:
+      volumes:
+        - name: vmconfig
+          configMap:
+            name: api-gateway-vmagent-cm
+      hostAliases:
+        - ip: "192.168.49.2"
+          hostnames:
+            - "keycloak.mini.store.127.0.0.1.nip.io"
+      containers:
+        - name: ministore-api-gateway
+          image: 192.168.49.1:5000/ministore/api-gateway:0.0.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_PROFILES_ACTIVE
+              value: cloudconfig, k8s
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config:config-password@ministore-config-server-svc.ministore.svc.cluster.local:8888
+            - name: LOKI
+              value: http://loki-svc.ministore.svc.cluster.local:3100
+        - name: vmagent
+          image: victoriametrics/vmagent:v1.93.12
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          args:
+            - -promscrape.config=/etc/opt/vmagent/promscrape.yml
+            - -remoteWrite.url=http://vm-svc.ministore.svc.cluster.local:8428/api/v1/write
+            - -remoteWrite.label=instance=$(NODE_NAME)
+          volumeMounts:
+            - mountPath: /etc/opt/vmagent
+              name: vmconfig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ministore-api-gateway-svc
+  namespace: ministore
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: ministore-api-gateway
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ministore-api-gateway-ingress
+spec:
+  rules:
+    - host: manager.mini.store.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-api-gateway-svc
+                port:
+                  name: http
+    - host: customer.mini.store.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-api-gateway-svc
+                port:
+                  name: http
+    - host: catalogue.api.mini.store.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-api-gateway-svc
+                port:
+                  name: http
+    - host: feedback.api.mini.store.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-api-gateway-svc
+                port:
+                  name: http

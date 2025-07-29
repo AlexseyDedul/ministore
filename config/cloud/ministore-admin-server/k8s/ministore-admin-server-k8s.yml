@@ -1,0 +1,24 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+        registration:
+          keycloak:
+            client-id: admin-service-k8s
+            client-secret: 667HXYv9aJloOwmdpbJQqIFPfLMCF5C4
+          login:
+            client-id: admin-service-k8s
+            client-secret: 667HXYv9aJloOwmdpbJQqIFPfLMCF5C4
+          discovery:
+            client-id: admin-service-k8s
+            client-secret: 667HXYv9aJloOwmdpbJQqIFPfLMCF5C4
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ministore-eureka-server-svc.ministore.svc.cluster.local:8761/eureka/
