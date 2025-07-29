@@ -1,7 +1,21 @@
 spring:
   security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8082/realms/ministore
     user:
       name: config
       password: config-password
       roles:
         - CONFIG
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'

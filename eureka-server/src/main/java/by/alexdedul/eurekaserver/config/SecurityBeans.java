@@ -15,9 +15,11 @@ public class SecurityBeans {
     @Priority(0)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception{
         return http
-                .securityMatcher("/eureka/apps", "/eureka/apps/**")
+                .securityMatcher("/eureka/apps", "/eureka/apps/**", "/actuator/**")
                 .authorizeHttpRequests(customizer -> customizer
-                        .anyRequest().hasAuthority("SCOPE_discovery"))
+                        .requestMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
+                        .requestMatchers("/eureka/apps", "/eureka/apps/**").hasAuthority("SCOPE_discovery")
+                        .anyRequest().denyAll())
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(CsrfConfigurer::disable)
                 .oauth2ResourceServer(customizer -> customizer.jwt(Customizer.withDefaults()))

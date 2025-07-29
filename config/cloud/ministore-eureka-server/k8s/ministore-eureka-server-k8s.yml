@@ -1,0 +1,27 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ministore-eureka-server-svc.ministore.svc.cluster.local:8761/eureka/
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            user-name-attribute: preferred_username
+            issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+        registration:
+          keycloak:
+            client-id: eureka-server-k8s
+            client-secret: eFGYjlkGgzAUAg1uqmdx16TSsTFc4AHB
+            scope:
+              - openid
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.springframework.security: DEBUG
