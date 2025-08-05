@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: ministore-customer-app-k8s
+  boot:
+    admin:
+      client:
+        enabled: false
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: customer-app-k8s
+            client-secret: PAOdUpiSxZJXOfcV3GxBJewImmw0DJ5e
+            scope:
+              - openid
+              - view_catalogue
+          metrics:
+            provider: keycloak
+            client-secret: PAOdUpiSxZJXOfcV3GxBJewImmw0DJ5e
+            client-id: customer-app-k8s
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+          discovery:
+            provider: keycloak
+            client-secret: PAOdUpiSxZJXOfcV3GxBJewImmw0DJ5e
+            client-id: customer-app-k8s
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+
+server:
+  port: 8080
+
+ministore:
+  services:
+    catalogue:
+      uri: http://ministore-catalogue-service-svc.ministore.svc.cluster.local:8080
+    feedback:
+      uri: http://ministore-feedback-service-svc.ministore.svc.cluster.local:8080
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  zipkin:
+    tracing:
+      endpoint: http://tempo-svc.ministore.svc.cluster.local:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    enabled: false

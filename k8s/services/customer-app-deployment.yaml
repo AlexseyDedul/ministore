@@ -49,12 +49,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: SERVER_PORT
-              value: "8080"
             - name: SPRING_PROFILES_ACTIVE
-              value: cloudconfig,k8s
-            - name: SPRING_CLOUD_CONFIG_URI
-              value: http://config:config-password@ministore-config-server-svc.ministore.svc.cluster.local:8888
+              value: k8s
             - name: LOKI
               value: http://loki-svc.ministore.svc.cluster.local:3100
         - name: vmagent
@@ -71,3 +67,32 @@ spec:
           volumeMounts:
             - mountPath: /etc/opt/vmagent
               name: vmconfig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ministore-customer-app-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: ministore-customer-app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ministore-customer-app-ingress
+spec:
+  rules:
+    - host: customer.mini.store.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ministore-customer-app-svc
+                port:
+                  name: http

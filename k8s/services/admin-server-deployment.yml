@@ -49,12 +49,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: SERVER_PORT
-              value: "8080"
             - name: SPRING_PROFILES_ACTIVE
-              value: cloudconfig,k8s
-            - name: SPRING_CLOUD_CONFIG_URI
-              value: http://config:config-password@ministore-config-server-svc.ministore.svc.cluster.local:8888
+              value: k8s
             - name: LOKI
               value: http://loki-svc.ministore.svc.cluster.local:3100
         - name: vmagent

@@ -1,0 +1,80 @@
+spring:
+  boot:
+    admin:
+      client:
+        enabled: false
+
+  application:
+    name: ministore-catalogue-service
+
+  datasource:
+    url: jdbc:postgresql://catalogue-db-svc.ministore.svc.cluster.local:5432/catalogue
+    username: postgres
+    password: postgres
+  flyway:
+    schemas:
+      - public
+      - catalogue
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+      client:
+        registration:
+          keycloak:
+            client-secret: mEj0DCUyIKUw12VQd8tMDjKMcjAJ3tjq
+            client-id: catalogue-service
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+          discovery:
+            provider: keycloak
+            client-secret: mEj0DCUyIKUw12VQd8tMDjKMcjAJ3tjq
+            client-id: catalogue-service
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.mini.store.127.0.0.1.nip.io/realms/ministore
+
+server:
+  forward-headers-strategy: framework
+  port: 8080
+
+logging:
+  level:
+    sql: info
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: catalogue-service-swagger-ui
+      use-pkce-with-authorization-code-grant: true
+
+keycloak:
+  uri: http://keycloak.mini.store.127.0.0.1.nip.io
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  zipkin:
+    tracing:
+      endpoint: http://tempo-svc.ministore.svc.cluster.local:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    enabled: false
