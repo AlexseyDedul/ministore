@@ -36,13 +36,15 @@ jobs:
         run: mvn -B -DskipTests=false clean verify
 
       - name: Sonar analysis (branch)
-        if: github.event_name != 'pull_request'
-        env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B sonar:sonar -Dsonar.branch.name="${GITHUB_REF_NAME}"
 
       - name: Sonar analysis (PR)
-        if: github.event_name == 'pull_request'
-        env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B sonar:sonar \
             -Dsonar.pullrequest.base="${{ github.base_ref }}" \

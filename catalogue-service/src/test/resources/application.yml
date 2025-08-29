@@ -1,15 +1,15 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:16:///ministore?TC_DEAMON=true
+    url: jdbc:tc:postgresql:16:///ministore?TC_DAEMON=true
     username: ministore
     password: ministore
   boot:
     admin:
       client:
         enabled: false
-    cloud:
-      config:
-        enabled: false
-  eureka:
-    client:
+  cloud:
+    config:
       enabled: false
+eureka:
+  client:
+    enabled: false
