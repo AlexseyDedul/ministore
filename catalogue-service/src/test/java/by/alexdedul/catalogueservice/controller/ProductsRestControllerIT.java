@@ -4,8 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,6 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductsRestControllerIT {
     @Autowired
     MockMvc mockMvc;
+
+    @MockitoBean(name = "defaultEurekaClientHttpRequestFactorySupplier")
+    EurekaClientHttpRequestFactorySupplier eurekaSupplier;
+
+    @MockitoBean
+    ClientRegistrationRepository clientRegistrationRepository;
+    @MockitoBean
+    OAuth2AuthorizedClientService authorizedClientService;
 
     @Test
     @Sql("/sql/products.sql")

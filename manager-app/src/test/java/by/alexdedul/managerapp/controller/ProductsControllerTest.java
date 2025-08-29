@@ -4,13 +4,11 @@ import by.alexdedul.managerapp.client.ProductsRestClient;
 import by.alexdedul.managerapp.client.exception.BadRequestException;
 import by.alexdedul.managerapp.controller.payload.NewProductPayload;
 import by.alexdedul.managerapp.entity.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ConcurrentModel;
@@ -18,7 +16,6 @@ import org.springframework.ui.ConcurrentModel;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

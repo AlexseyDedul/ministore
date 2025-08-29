@@ -7,8 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.netflix.eureka.http.DefaultEurekaClientHttpRequestFactorySupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -22,6 +26,15 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 class ProductControllerIT {
     @Autowired
     private WebTestClient webTestClient;
+
+    @MockitoBean
+    DefaultEurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier;
+
+    @MockitoBean
+    ReactiveClientRegistrationRepository clientRegistrationRepository;
+
+    @MockitoBean
+    ReactiveOAuth2AuthorizedClientService authorizedClientService;
 
     @BeforeEach
     void setUp() {
