@@ -58,21 +58,48 @@ jobs:
             -Dspring.cloud.discovery.enabled=false
 
       # Sonar для push (ветки)
+      - name: Start SonarQube (Docker)
+        run: |
+          docker run -d --name sonarqube -p 9000:9000 \
+            -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true \
+            sonarqube:lts-community
+
+      - name: Wait for SonarQube to be up
+        run: |
+          for i in {1..60}; do
+            STATUS=$(curl -sS http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' || true)
+            echo "SonarQube status: $STATUS"
+            echo "$STATUS" | grep -q '"status":"UP"' && break
+            sleep 5
+          done
+
+      - name: Generate Sonar token
+        id: sonar_token
+        run: |
+          TOKEN_JSON=$(curl -sS -u admin:admin -X POST \
+            'http://localhost:9000/api/user_tokens/generate' \
+            -d name=ci -d type=GLOBAL_ANALYSIS_TOKEN)
+          TOKEN=$(echo "$TOKEN_JSON" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+          if [ -z "$TOKEN" ]; then echo "Failed to get token"; exit 1; fi
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
       - name: Sonar analysis (branch)
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ steps.sonar_token.outputs.token }}
         run: |
           mvn -B -ntp sonar:sonar \
+            -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.branch.name="${GITHUB_REF_NAME}"
 
       # Sonar для PR
       - name: Sonar analysis (PR)
         if: ${{ github.event_name == 'pull_request' }}
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ steps.sonar_token.outputs.token }}
         run: |
           mvn -B -ntp sonar:sonar \
+            -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.pullrequest.base="${{ github.base_ref }}" \
             -Dsonar.pullrequest.branch="${{ github.head_ref }}" \
             -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
