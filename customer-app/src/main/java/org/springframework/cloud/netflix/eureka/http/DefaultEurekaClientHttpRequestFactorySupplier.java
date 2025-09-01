@@ -7,11 +7,13 @@ package org.springframework.cloud.netflix.eureka.http;
 
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.config.TlsConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.Timeout;
@@ -62,33 +64,44 @@ public class DefaultEurekaClientHttpRequestFactorySupplier implements EurekaClie
         return requestFactory;
     }
 
-    private HttpClientConnectionManager buildConnectionManager(SSLContext sslContext, HostnameVerifier hostnameVerifier, TimeoutProperties timeoutProperties) {
-        PoolingHttpClientConnectionManagerBuilder connectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
-        SSLConnectionSocketFactoryBuilder sslConnectionSocketFactoryBuilder = SSLConnectionSocketFactoryBuilder.create();
-        if (sslContext != null) {
-            sslConnectionSocketFactoryBuilder.setSslContext(sslContext);
-        }
+    private HttpClientConnectionManager buildConnectionManager(
+            SSLContext sslContext,
+            HostnameVerifier hostnameVerifier,
+            TimeoutProperties timeoutProperties) {
 
-        if (hostnameVerifier != null) {
-            sslConnectionSocketFactoryBuilder.setHostnameVerifier(hostnameVerifier);
-        }
+        TlsConfig.Builder tls = TlsConfig.custom();
+        TlsSocketStrategy tlsSocketStrategy = ClientTlsStrategyBuilder.create()
+                .setSslContext(sslContext)
+                .setHostnameVerifier(hostnameVerifier)
+                .buildClassic();
 
-        connectionManagerBuilder.setSSLSocketFactory(sslConnectionSocketFactoryBuilder.build());
+        PoolingHttpClientConnectionManagerBuilder cmBuilder =
+                PoolingHttpClientConnectionManagerBuilder.create()
+                        .setTlsSocketStrategy(tlsSocketStrategy)
+                        .setDefaultTlsConfig(tls.build());
+
         if (timeoutProperties != null) {
-            connectionManagerBuilder.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(Timeout.of((long)timeoutProperties.getSocketTimeout(), TimeUnit.MILLISECONDS)).build());
-            connectionManagerBuilder.setDefaultConnectionConfig(ConnectionConfig.custom().setConnectTimeout(Timeout.of((long)timeoutProperties.getConnectTimeout(), TimeUnit.MILLISECONDS)).build());
+            cmBuilder.setDefaultSocketConfig(
+                    SocketConfig.custom()
+                            .setSoTimeout(Timeout.of(timeoutProperties.getSocketTimeout(), TimeUnit.MILLISECONDS))
+                            .build());
+
+            cmBuilder.setDefaultConnectionConfig(
+                    ConnectionConfig.custom()
+                            .setConnectTimeout(Timeout.of(timeoutProperties.getConnectTimeout(), TimeUnit.MILLISECONDS))
+                            .build());
         }
 
-        return connectionManagerBuilder.build();
+        return cmBuilder.build();
     }
 
     private RequestConfig buildRequestConfig() {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
         if (this.timeoutProperties != null) {
-            requestConfigBuilder.setConnectionRequestTimeout(Timeout.of((long)this.timeoutProperties.getConnectRequestTimeout(), TimeUnit.MILLISECONDS));
+            requestConfigBuilder.setConnectionRequestTimeout(Timeout.of(this.timeoutProperties.getConnectRequestTimeout(), TimeUnit.MILLISECONDS));
         }
 
-        this.requestConfigCustomizers.forEach((customizer) -> customizer.customize(requestConfigBuilder));
+        this.requestConfigCustomizers.forEach(customizer -> customizer.customize(requestConfigBuilder));
         return requestConfigBuilder.build();
     }
 }

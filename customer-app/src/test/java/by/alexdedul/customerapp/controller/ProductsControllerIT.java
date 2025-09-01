@@ -16,7 +16,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 @SpringBootTest
 @AutoConfigureWebTestClient
 @WireMockTest(httpPort = 54321)
-public class ProductsControllerIT {
+class ProductsControllerIT {
     @Autowired
     WebTestClient webTestClient;
 

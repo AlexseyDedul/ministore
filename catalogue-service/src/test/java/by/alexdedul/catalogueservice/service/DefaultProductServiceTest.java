@@ -83,7 +83,6 @@ class DefaultProductServiceTest {
     @Test
     void findProduct_ProductDoesNotExist_ReturnsEmptyOptional() {
         // given
-        var product = new Product(1, "Product №1", "Description №1");
 
         // when
         var result = this.service.findProductById(1);

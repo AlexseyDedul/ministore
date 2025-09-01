@@ -14,7 +14,7 @@
   <li data-th-each="product : ${products}">
     <strong>
       <a data-th-text="${product.title}"
-         data-th-href="@{/customer/products/{productId}(productId=${product.id})}"></a>
+         data-th-href="@{/customer/products/{productId}(productId=${product.id})}">Product title</a>
     </strong>
     <p data-th-text="${product.details}"></p>
   </li>

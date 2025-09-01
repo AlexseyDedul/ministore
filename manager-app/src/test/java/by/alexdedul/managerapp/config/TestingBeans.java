@@ -8,12 +8,18 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.web.client.RestClient;
 
 import static org.mockito.Mockito.mock;
 
 @Configuration
 public class TestingBeans {
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return mock(JwtDecoder.class);
+    }
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {

@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:postgresql://catalogue-db-svc.ministore.svc.cluster.local:5432/catalogue
     username: postgres
-    password: postgres
+    password: ${POSTGRES_PASSWORD:postgres}
   flyway:
     schemas:
       - public

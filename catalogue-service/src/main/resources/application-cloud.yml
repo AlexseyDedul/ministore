@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/catalogue
     username: postgres
-    password: postgres
+    password: ${POSTGRES_PASSWORD:postgres}
   flyway:
     schemas:
       - public

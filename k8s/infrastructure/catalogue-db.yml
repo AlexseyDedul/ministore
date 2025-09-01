@@ -42,6 +42,7 @@ spec:
       labels:
         app: catalogue-db
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: catalogue-db
           image: postgres:16
@@ -58,6 +59,15 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgresql-persistent-storage
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+              ephemeral-storage: "2Gi"
       volumes:
         - name: postgresql-persistent-storage
           persistentVolumeClaim:

@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @WireMockTest(httpPort = 54321)
-public class ProductControllerIT {
+//@ActiveProfiles("test")
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProductControllerIT {
 
     @Autowired
     private MockMvc mockMvc;

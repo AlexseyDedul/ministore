@@ -24,6 +24,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ministore-admin-server-deployment
+  namespace: ministore
   labels:
     app: ministore-admin-server
 spec:
@@ -35,6 +36,7 @@ spec:
       labels:
         app: ministore-admin-server
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: vmconfig
           configMap:
@@ -53,6 +55,15 @@ spec:
               value: k8s
             - name: LOKI
               value: http://loki-svc.ministore.svc.cluster.local:3100
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "256Mi"
+              ephemeral-storage: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+              ephemeral-storage: "1Gi"
         - name: vmagent
           image: victoriametrics/vmagent:v1.93.12
           env:
@@ -67,6 +78,15 @@ spec:
           volumeMounts:
             - mountPath: /etc/opt/vmagent
               name: vmconfig
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "256Mi"
+              ephemeral-storage: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: v1
 kind: Service

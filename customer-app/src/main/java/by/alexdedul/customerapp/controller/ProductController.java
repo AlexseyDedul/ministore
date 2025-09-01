@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.security.web.reactive.result.view.CsrfRequestDataValueProcessor;
+import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,9 @@ import java.util.Objects;
 @RequestMapping("customer/products/{productId:\\d+}")
 @Slf4j
 public class ProductController {
+
+    private static final String IN_FAVORITE = "inFavourite";
+    private static final String REDIRECT_CUSTOMER_PRODUCTS = "redirect:/customer/products/%d";
     private final ProductsClient productsClient;
     private final FavouriteProductsClient favouriteProductsClient;
     private final ProductReviewsClient productReviewsClient;
@@ -40,13 +43,13 @@ public class ProductController {
 
     @GetMapping
     public Mono<String> getProductPage(@ModelAttribute("product") Mono<Product> productMono, Model model) {
-        model.addAttribute("inFavourite", false);
+        model.addAttribute(IN_FAVORITE, false);
         return productMono.flatMap(
                 product -> this.productReviewsClient.findProductReviewsByProductId(product.id())
                         .collectList()
                         .doOnNext(productReviews -> model.addAttribute("reviews", productReviews))
                         .then(this.favouriteProductsClient.findFavouriteProductByProductId(product.id())
-                                .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true)))
+                                .doOnNext(favouriteProduct -> model.addAttribute(IN_FAVORITE, true)))
                         .thenReturn("customer/products/product")
         );
     }
@@ -56,10 +59,10 @@ public class ProductController {
         return productMono
                 .map(Product::id)
                 .flatMap(productId -> this.favouriteProductsClient.addProductToFavourites(productId)
-                        .thenReturn("redirect:/customer/products/%d".formatted(productId))
+                        .thenReturn(REDIRECT_CUSTOMER_PRODUCTS.formatted(productId))
                         .onErrorResume(exception -> {
                             log.error(exception.getMessage(), exception);
-                            return Mono.just("redirect:/customer/products/%d".formatted(productId));
+                            return Mono.just(REDIRECT_CUSTOMER_PRODUCTS.formatted(productId));
                         }));
     }
 
@@ -68,10 +71,10 @@ public class ProductController {
         return productMono
                 .map(Product::id)
                 .flatMap(productId -> favouriteProductsClient.removeProductFromFavourites(productId)
-                        .thenReturn("redirect:/customer/products/%d".formatted(productId))
+                        .thenReturn(REDIRECT_CUSTOMER_PRODUCTS.formatted(productId))
                         .onErrorResume(ex -> {
                             log.error("Error removing product from favourites {}", ex.getMessage());
-                            return Mono.just("redirect:/customer/products/%d".formatted(productId));
+                            return Mono.just(REDIRECT_CUSTOMER_PRODUCTS.formatted(productId));
                         }));
     }
 
@@ -82,14 +85,14 @@ public class ProductController {
                                      ServerHttpResponse response) {
         return productMono.flatMap(product ->
                 this.productReviewsClient.createProductReview(product.id(), payload.rating(), payload.review())
-                        .thenReturn("redirect:/customer/products/%d".formatted(product.id()))
+                        .thenReturn(REDIRECT_CUSTOMER_PRODUCTS.formatted(product.id()))
                         .onErrorResume(ClientBadRequestException.class, exception -> {
-                            model.addAttribute("inFavourite", false);
+                            model.addAttribute(IN_FAVORITE, false);
                             model.addAttribute("payload", payload);
                             model.addAttribute("errors", exception.getErrors());
                             response.setStatusCode(HttpStatus.BAD_REQUEST);
                             return this.favouriteProductsClient.findFavouriteProductByProductId(product.id())
-                                    .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true))
+                                    .doOnNext(favouriteProduct -> model.addAttribute(IN_FAVORITE, true))
                                     .thenReturn("customer/products/product");
                         }));
     }

@@ -11,17 +11,19 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityBeans {
+    private static final String EDIT_CATALOGUE_SCOPE = "SCOPE_edit_catalogue";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/catalogue-api/products")
-                                .hasAuthority("SCOPE_edit_catalogue")
+                                .hasAuthority(EDIT_CATALOGUE_SCOPE)
                                 .requestMatchers(HttpMethod.PATCH, "/catalogue-api/products/{productId:\\d}")
-                                .hasAuthority("SCOPE_edit_catalogue")
+                                .hasAuthority(EDIT_CATALOGUE_SCOPE)
                                 .requestMatchers(HttpMethod.DELETE, "/catalogue-api/products/{productId:\\d}")
-                                .hasAuthority("SCOPE_edit_catalogue")
+                                .hasAuthority(EDIT_CATALOGUE_SCOPE)
                                 .requestMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
                                 .requestMatchers(HttpMethod.GET).hasAuthority("SCOPE_view_catalogue")
                                 .anyRequest().denyAll())

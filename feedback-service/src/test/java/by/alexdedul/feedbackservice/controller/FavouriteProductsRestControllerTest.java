@@ -23,7 +23,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class FavouriteProductsRestControllerTest {
+class FavouriteProductsRestControllerTest {
     @Mock
     FavouriteProductsService favouriteProductsService;
 

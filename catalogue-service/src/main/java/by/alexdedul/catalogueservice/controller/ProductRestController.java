@@ -56,7 +56,7 @@ public class ProductRestController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteProduct(@PathVariable("productId") int productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") int productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }

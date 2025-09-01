@@ -1,4 +1,5 @@
 name: CI (Maven + JaCoCo + Sonar)
+
 on:
   push: { branches: ['**'] }
   pull_request: { branches: [ main ] }
@@ -6,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 env:
   JAVA_VERSION: 17
@@ -15,45 +16,89 @@ env:
 jobs:
   build-and-sonar:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-        with: { fetch-depth: 0, persist-credentials: false }
 
-      - uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           java-version: ${{ env.JAVA_VERSION }}
           cache: maven
 
+      - name: Docker sanity check
+        run: |
+          docker --version
+          docker info
+
+      - name: Pre-pull common images
+        run: |
+          docker pull postgres:16 || true
+          docker pull mongo:7 || true
+          docker pull rabbitmq:3-management || true
+
       - name: Cache Sonar packages
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+      # Прогон unit + IT (failsafe)
       - name: Build & Test (aggregate coverage)
-        run: mvn -B -DskipTests=false clean verify
-
-      - name: Sonar analysis (branch)
-        if: github.event_name != 'pull_request'
-        env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
-        run: mvn -B sonar:sonar -Dsonar.branch.name="${GITHUB_REF_NAME}"
-
-      - name: Sonar analysis (PR)
-        if: github.event_name == 'pull_request'
-        env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
         run: |
-          mvn -B sonar:sonar \
-            -Dsonar.pullrequest.base="${{ github.base_ref }}" \
-            -Dsonar.pullrequest.branch="${{ github.head_ref }}" \
-            -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
+          mvn -B -ntp clean verify \
+            -DwithDocker=${{ env.withDocker }} \
+            -Deureka.client.enabled=false \
+            -Dspring.cloud.discovery.enabled=false
+
+      # Sonar для push (ветки)
+      - name: Start SonarQube (Docker)
+        run: |
+          docker run -d --name sonarqube -p 9000:9000 \
+            -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true \
+            sonarqube:lts-community
+
+      - name: Wait for SonarQube to be up
+        run: |
+          for i in {1..60}; do
+            STATUS=$(curl -sS http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' || true)
+            echo "SonarQube status: $STATUS"
+            echo "$STATUS" | grep -q '"status":"UP"' && break
+            sleep 5
+          done
+
+      - name: Generate Sonar token
+        id: sonar_token
+        run: |
+          TOKEN_JSON=$(curl -sS -u admin:admin -X POST \
+            'http://localhost:9000/api/user_tokens/generate' \
+            -d name=ci -d type=GLOBAL_ANALYSIS_TOKEN)
+          TOKEN=$(echo "$TOKEN_JSON" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+          if [ -z "$TOKEN" ]; then echo "Failed to get token"; exit 1; fi
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Sonar analysis (Community; only main)
+        if: github.ref == 'refs/heads/main'
+        env:
+          SONAR_TOKEN: ${{ steps.sonar_token.outputs.token }}
+        run: |
+          mvn -B -ntp sonar:sonar \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.projectKey=ministore-parent \
+            -Dsonar.projectName=ministore-parent
 
       - name: Upload test & coverage reports
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@v4
         with:
           name: surefire-and-jacoco
           path: |
             **/target/surefire-reports/**
             target/site/jacoco-aggregate/**
+            **/target/site/jacoco/**

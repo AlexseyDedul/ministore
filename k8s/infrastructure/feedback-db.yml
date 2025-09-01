@@ -42,6 +42,7 @@ spec:
       labels:
         app: feedback-db
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: feedback-db
           image: mongo:7
@@ -51,6 +52,15 @@ spec:
           volumeMounts:
             - mountPath: /data/db
               name: mongodb-persistent-storage
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+              ephemeral-storage: "2Gi"
       volumes:
         - name: mongodb-persistent-storage
           persistentVolumeClaim:

@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DefaultProductReviewsServiceTest {
+class DefaultProductReviewsServiceTest {
     @Mock
     ProductReviewRepository productReviewRepository;
 

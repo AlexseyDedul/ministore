@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 public class OAuthHttpHeadersProvider implements HttpHeadersProvider {
 
@@ -20,7 +22,7 @@ public class OAuthHttpHeadersProvider implements HttpHeadersProvider {
                         .principal("admin-service")
                         .build());
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(oAuth2AuthorizedClient.getAccessToken().getTokenValue());
+        headers.setBearerAuth(Objects.requireNonNull(oAuth2AuthorizedClient).getAccessToken().getTokenValue());
         return headers;
     }
 }
