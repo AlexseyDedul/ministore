@@ -83,26 +83,15 @@ jobs:
           if [ -z "$TOKEN" ]; then echo "Failed to get token"; exit 1; fi
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
-      - name: Sonar analysis (branch)
-        if: ${{ github.event_name != 'pull_request' }}
+      - name: Sonar analysis (Community; only main)
+        if: github.ref == 'refs/heads/main'
         env:
           SONAR_TOKEN: ${{ steps.sonar_token.outputs.token }}
         run: |
           mvn -B -ntp sonar:sonar \
             -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.branch.name="${GITHUB_REF_NAME}"
-
-      # Sonar для PR
-      - name: Sonar analysis (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          SONAR_TOKEN: ${{ steps.sonar_token.outputs.token }}
-        run: |
-          mvn -B -ntp sonar:sonar \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.pullrequest.base="${{ github.base_ref }}" \
-            -Dsonar.pullrequest.branch="${{ github.head_ref }}" \
-            -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
+            -Dsonar.projectKey=ministore-parent \
+            -Dsonar.projectName=ministore-parent
 
       - name: Upload test & coverage reports
         if: always()
