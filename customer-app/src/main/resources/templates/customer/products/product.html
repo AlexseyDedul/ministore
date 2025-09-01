@@ -6,7 +6,7 @@
 </head>
 <body>
 <a data-th-href="@{/customer/products/list}">&lAarr; Back to products list</a>
-<h1 data-th-text="${product.title}"></h1>
+<h1 data-th-text="${product.title}">Product Title</h1>
 <p data-th-text="${product.details}"></p>
 <form method="post" data-th-action="@{/customer/products/{productId}/add-to-favourites(productId=${product.id})}"
     data-th-if="${!inFavourite}">
@@ -21,7 +21,7 @@
 
 <h2>Reviews</h2>
 <div data-th-if="${errors}">
-    <h3></h3>
+    <h3>Errors:</h3>
     <ul>
         <li data-th-each="error : ${errors}" data-th-text="${error}"></li>
     </ul>

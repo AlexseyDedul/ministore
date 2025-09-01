@@ -82,10 +82,10 @@ class ProductsControllerIT {
     @Test
     void getNewProductPage_ReturnsProductPage() throws Exception {
         //given
-        var RequestBuilder = MockMvcRequestBuilders.get("/catalogue/products/create")
+        var requestBuilder = MockMvcRequestBuilders.get("/catalogue/products/create")
                 .with(user("alexdedul").roles("MANAGER"));
         //when
-        mockMvc.perform(RequestBuilder)
+        mockMvc.perform(requestBuilder)
         //then
                 .andDo(print())
                 .andExpectAll(

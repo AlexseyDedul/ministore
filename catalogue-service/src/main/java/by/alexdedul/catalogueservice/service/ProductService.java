@@ -2,7 +2,6 @@ package by.alexdedul.catalogueservice.service;
 
 import by.alexdedul.catalogueservice.entity.Product;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {

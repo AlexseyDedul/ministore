@@ -13,10 +13,12 @@ import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 public class RestClientProductsRestClient implements ProductsRestClient {
+    private static final String CATALOGUE_URL = "/catalogue-api/products/{productId}";
     private static final ParameterizedTypeReference<List<Product>> PRODUCT_LIST_TYPE =
             new ParameterizedTypeReference<List<Product>>() {};
 
@@ -40,8 +42,8 @@ public class RestClientProductsRestClient implements ProductsRestClient {
                     .retrieve()
                     .body(Product.class);
         }catch (HttpClientErrorException.BadRequest e) {
-            ProblemDetail problem = e.getResponseBodyAs(ProblemDetail.class);
-            throw new BadRequestException((List<String>) problem.getProperties().get("errors"));
+            ProblemDetail problem = Objects.requireNonNull(e.getResponseBodyAs(ProblemDetail.class));
+            throw new BadRequestException((List<String>) Objects.requireNonNull(problem.getProperties()).get("errors"));
         }
     }
 
@@ -49,7 +51,7 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     public Optional<Product> getProduct(int productId) {
         try {
             return Optional.ofNullable(restClient.get()
-                    .uri("/catalogue-api/products/{productId}", productId)
+                    .uri(CATALOGUE_URL, productId)
                     .retrieve()
                     .body(Product.class));
         }catch (HttpClientErrorException.NotFound e) {
@@ -61,24 +63,24 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     public void updateProduct(int productId, String title, String details) {
         try {
             restClient.patch()
-                    .uri("/catalogue-api/products/{productId}", productId)
+                    .uri(CATALOGUE_URL, productId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new UpdateProductPayload(title, details))
                     .retrieve()
                     .toBodilessEntity();
         }catch (HttpClientErrorException.BadRequest e) {
-            ProblemDetail problem = e.getResponseBodyAs(ProblemDetail.class);
-            throw new BadRequestException((List<String>) problem.getProperties().get("errors"));
+            ProblemDetail problem = Objects.requireNonNull(e.getResponseBodyAs(ProblemDetail.class));
+            throw new BadRequestException((List<String>) Objects.requireNonNull(problem.getProperties()).get("errors"));
         }
     }
 
     @Override
     public void deleteProduct(int productId) {
         try {
-            Optional.ofNullable(restClient.delete()
-                    .uri("/catalogue-api/products/{productId}", productId)
+            restClient.delete()
+                    .uri(CATALOGUE_URL, productId)
                     .retrieve()
-                    .toBodilessEntity());
+                    .toBodilessEntity();
         }catch (HttpClientErrorException.NotFound e) {
             throw new NoSuchElementException(e);
         }

@@ -1,5 +1,5 @@
 # 1. Build stage
-FROM eclipse-temurin:17-jdk-jammy as build
+FROM eclipse-temurin:17-jdk-jammy AS build
 
 ARG JAR_FILE
 WORKDIR /build
@@ -19,4 +19,4 @@ COPY --from=build /build/extracted/spring-boot-loader .
 COPY --from=build /build/extracted/snapshot-dependencies .
 COPY --from=build /build/extracted/application .
 
-ENTRYPOINT exec java ${JAVA_OPTS} org.springframework.boot.loader.launch.JarLauncher ${0} ${@}
+ENTRYPOINT ["sh","-lc","exec java ${JAVA_OPTS} org.springframework.boot.loader.launch.JarLauncher \"$@\"","--"]

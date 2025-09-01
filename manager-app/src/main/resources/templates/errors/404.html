@@ -5,7 +5,7 @@
   <title data-th-text="#{'errors.404.title'}"></title>
 </head>
 <body>
-<h1 data-th-text="#{'errors.404.header'}"></h1>
-<h2 data-th-text="${error}"></h2>
+<h1 th:text="#{'errors.404.header'}">404 — Page not found</h1>
+<h2 th:text="${error}">Something went wrong</h2>
 </body>
 </html>

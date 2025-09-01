@@ -4,7 +4,6 @@ import by.alexdedul.adminserver.web.client.OAuthHttpHeadersProvider;
 import jakarta.annotation.Priority;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,10 +14,9 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.Optional;
-
 @Configuration
 public class SecurityBeans {
+    private static final String INSTANCES_URL = "/instances";
 
     @Bean
     public OAuthHttpHeadersProvider oAuthHttpHeadersProvider(ClientRegistrationRepository clientRegistrationRepository,
@@ -35,12 +33,12 @@ public class SecurityBeans {
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatchers(customizer -> customizer
-                        .requestMatchers(HttpMethod.POST, "/instances")
-                        .requestMatchers(HttpMethod.DELETE, "/instances")
+                        .requestMatchers(HttpMethod.POST, INSTANCES_URL)
+                        .requestMatchers(HttpMethod.DELETE, INSTANCES_URL)
                         .requestMatchers("/actuator/**"))
                 .oauth2ResourceServer(customizer -> customizer.jwt(Customizer.withDefaults()))
                 .authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers("/instances", "/instances/*")
+                        .requestMatchers(INSTANCES_URL, "/instances/*")
                         .hasAuthority("SCOPE_metrics_server")
                         .requestMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
                         .anyRequest().denyAll())

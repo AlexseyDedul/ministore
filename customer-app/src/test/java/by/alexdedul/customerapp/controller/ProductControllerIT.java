@@ -305,7 +305,7 @@ class ProductControllerIT {
 
 
     @Test
-    void createReview_RequestIsInvalid_ReturnsProductPage() throws Exception {
+    void createReview_RequestIsInvalid_ReturnsProductPage() {
         // given
         stubFor(post("/feedback-api/product-reviews")
                 .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))

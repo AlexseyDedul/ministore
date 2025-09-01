@@ -1,4 +1,5 @@
 name: CI (Maven + JaCoCo + Sonar)
+
 on:
   push: { branches: ['**'] }
   pull_request: { branches: [ main ] }
@@ -6,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 env:
   JAVA_VERSION: 17
@@ -15,47 +16,73 @@ env:
 jobs:
   build-and-sonar:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-        with: { fetch-depth: 0, persist-credentials: false }
 
-      - uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           java-version: ${{ env.JAVA_VERSION }}
           cache: maven
 
+      - name: Docker sanity check
+        run: |
+          docker --version
+          docker info
+
+      - name: Pre-pull common images
+        run: |
+          docker pull postgres:16 || true
+          docker pull mongo:7 || true
+          docker pull rabbitmq:3-management || true
+
       - name: Cache Sonar packages
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+      # Прогон unit + IT (failsafe)
       - name: Build & Test (aggregate coverage)
-        run: mvn -B -DskipTests=false clean verify
+        run: |
+          mvn -B -ntp clean verify \
+            -DwithDocker=${{ env.withDocker }} \
+            -Deureka.client.enabled=false \
+            -Dspring.cloud.discovery.enabled=false
 
+      # Sonar для push (ветки)
       - name: Sonar analysis (branch)
         if: ${{ github.event_name != 'pull_request' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B sonar:sonar -Dsonar.branch.name="${GITHUB_REF_NAME}"
+        run: |
+          mvn -B -ntp sonar:sonar \
+            -Dsonar.branch.name="${GITHUB_REF_NAME}"
 
+      # Sonar для PR
       - name: Sonar analysis (PR)
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B sonar:sonar \
+          mvn -B -ntp sonar:sonar \
             -Dsonar.pullrequest.base="${{ github.base_ref }}" \
             -Dsonar.pullrequest.branch="${{ github.head_ref }}" \
             -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
 
       - name: Upload test & coverage reports
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@v4
         with:
           name: surefire-and-jacoco
           path: |
             **/target/surefire-reports/**
             target/site/jacoco-aggregate/**
+            **/target/site/jacoco/**

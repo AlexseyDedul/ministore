@@ -11,7 +11,7 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 @Configuration
 public class SecurityBeans {
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/actuator/**"))
                 .authorizeExchange(configurer -> configurer

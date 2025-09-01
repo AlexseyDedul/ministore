@@ -43,6 +43,7 @@ spec:
       labels:
         app: grafana
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: update-permissions
           image: busybox
@@ -59,6 +60,15 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/grafana
               name: grafana-data
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+              ephemeral-storage: "2Gi"
       volumes:
         - name: grafana-data
           persistentVolumeClaim:

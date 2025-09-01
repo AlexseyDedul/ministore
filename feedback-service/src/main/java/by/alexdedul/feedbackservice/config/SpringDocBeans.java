@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.security.OAuthFlows;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
+@SuppressWarnings("java:S1118")
 public class SpringDocBeans {
     @SecurityScheme(
             name = "keycloak",

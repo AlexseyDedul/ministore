@@ -6,7 +6,7 @@ spring:
           issuer-uri: http://host.docker.internal:8082/realms/ministore
     user:
       name: config
-      password: config-password
+      password: ${CONFIG_PASSWORD:config-password}
       roles:
         - CONFIG
 management:

@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OAuthClientHttpRequestInterceptorTest {
+class OAuthClientHttpRequestInterceptorTest {
     @Mock
     OAuth2AuthorizedClientManager authorizedClientManager;
 
