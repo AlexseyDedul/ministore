@@ -70,9 +70,12 @@ jobs:
 
       - name: Wait for SonarQube to be up
         run: |
-          for i in {1..60}; do
-            STATUS=$(curl -sS http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' || true)
-            echo "SonarQube status: $STATUS"
+          for _ in {1..60}; do
+            STATUS=$(curl -sS http://localhost:9000/api/system/status \
+              | grep -o '"status":"[^"]*"' \
+              | cut -d: -f2 \
+              | tr -d '"' || true)"
+            echo "SonarQube status: ${STATUS:-unknown}"
             echo "$STATUS" | grep -q '"status":"UP"' && break
             sleep 5
           done
