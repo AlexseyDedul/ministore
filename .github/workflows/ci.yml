@@ -5,9 +5,14 @@ on:
   pull_request: { branches: [ main ] }
   workflow_dispatch: {}
 
+concurrency:
+  group: ci-${{github.ref}}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: write
+  security-events: write
 
 env:
   JAVA_VERSION: 17
@@ -16,7 +21,6 @@ env:
 jobs:
   build-and-sonar:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,3 +106,8 @@ jobs:
             **/target/surefire-reports/**
             target/site/jacoco-aggregate/**
             **/target/site/jacoco/**
+      - name: Cleanup Docker
+        if: always()
+        run: |
+          docker ps -aq | xargs -r docker rm -f
+          docker system prune -af || true
