@@ -5,9 +5,14 @@ on:
   pull_request: { branches: [ main ] }
   workflow_dispatch: {}
 
+concurrency:
+  group: ci-${{github.ref}}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: write
+  security-events: write
 
 env:
   JAVA_VERSION: 17
@@ -16,7 +21,6 @@ env:
 jobs:
   build-and-sonar:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +44,6 @@ jobs:
         run: |
           docker pull postgres:16 || true
           docker pull mongo:7 || true
-          docker pull rabbitmq:3-management || true
 
       - name: Cache Sonar packages
         uses: actions/cache@v4
@@ -66,11 +69,17 @@ jobs:
 
       - name: Wait for SonarQube to be up
         run: |
-          for i in {1..60}; do
-            STATUS=$(curl -sS http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' || true)
-            echo "SonarQube status: $STATUS"
-            echo "$STATUS" | grep -q '"status":"UP"' && break
-            sleep 5
+          set -euo pipefail
+          for _ in {1..60}; do 
+          STATUS="$(curl -fsS http://localhost:9000/api/system/status \
+          | grep -o '"status":"[^"]*"' \
+          | cut -d: -f2 \
+          | tr -d '"' || true)" 
+          echo "SonarQube status: ${STATUS:-unknown}"
+          if [ "${STATUS:-}" = "UP" ]; then
+          break
+          fi
+          sleep 5
           done
 
       - name: Generate Sonar token
@@ -81,7 +90,7 @@ jobs:
             -d name=ci -d type=GLOBAL_ANALYSIS_TOKEN)
           TOKEN=$(echo "$TOKEN_JSON" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
           if [ -z "$TOKEN" ]; then echo "Failed to get token"; exit 1; fi
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
       - name: Sonar analysis (Community; only main)
         if: github.ref == 'refs/heads/main'
@@ -102,3 +111,8 @@ jobs:
             **/target/surefire-reports/**
             target/site/jacoco-aggregate/**
             **/target/site/jacoco/**
+      - name: Cleanup Docker
+        if: always()
+        run: |
+          docker ps -aq | xargs -r docker rm -f
+          docker system prune -af || true

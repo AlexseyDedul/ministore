@@ -1,0 +1,32 @@
+name: actionlint
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: ['**']
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: Check Github actions workflows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Run actionlint
+        uses: reviewdog/action-actionlint@e37e2ca68a70112d21e135229272da28ce2d0d5a
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-check
+          fail_level: error
+          level: error
+          filter_mode: nofilter
