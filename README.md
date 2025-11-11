@@ -1,5 +1,5 @@
 # ministore
-Ministore project for development different functionality
+Ministore project for development different functionality. Updated
 
 # Spring profiles
 * standalone – to run the modules `admin-server`, `catalogue-service`, `feedback-service`, `customer-app`, and `manager-app` without Spring Cloud Eureka, Spring Cloud Config, Docker, or Kubernetes.
